@@ -4,6 +4,8 @@ import './App.css'
 import Navbar from './components/shared/Navbar'
 import Login from "./components/auth/Login";
 import Signup from "./components/auth/Signup";
+import Home from "./components/Home";
+import Jobs from "./components/Jobs";
 
 function App() {
  
@@ -13,8 +15,10 @@ function App() {
        <Router>
        <Navbar/>
         <Routes>
+          <Route index path="/" element={<Home/>}/>
           <Route path="/login" element={<Login/>}/>
           <Route path="/signup" element={<Signup/>} />
+          <Route path="/jobs" element={<Jobs/>}/>
         </Routes>
        </Router>
        
