@@ -70,7 +70,7 @@ const login = async (req, res) => {
       _id: user._id,
       fullname: user.fullname,
       email: user.email,
-      phonenumber: user.phonenumber,
+      phoneNumber: user.phoneNumber,
       role: user.role,
       profile: user.profile,
     };
@@ -83,8 +83,9 @@ const login = async (req, res) => {
       })
       .send({
         message: `Welcome back" ${user.fullname}`,
+        user: user,
         success: true,
-        token,
+        
       });
   } catch (error) {
     console.log(error);
@@ -103,9 +104,11 @@ const logout = async (req, res) => {
   }
 };
 
+
 const updateProfile=async(req,res)=>{
     try {
         const { fullname, email, phoneNumber, bio, skills } = req.body;
+       
         const file=req.file;
          
     // cloudinary
@@ -133,10 +136,11 @@ const updateProfile=async(req,res)=>{
         _id: user._id,
         fullname: user.fullname,
         email: user.email,
-        phonenumber: user.phonenumber,
+        phoneNumber: user.phoneNumber,
         role: user.role,
         profile: user.profile,
       };
+      console.log(user, "update")
       return res.status(200).send({ message: "Profile updated successfully", success: true, user})
     } catch (error) {
         console.log(error)
