@@ -73,8 +73,9 @@ const Profile = () => {
           {isResume ? (
             <a
               target="blank"
+              href={user?.profile?.resume}
               className="text-blue-500 w-full hover:underline cursor-pointer"
-            ></a>
+            >{user?.profile?.resumeOriginalName}</a>
           ) : (
             <span>NA</span>
           )}

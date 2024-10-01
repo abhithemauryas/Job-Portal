@@ -1,11 +1,13 @@
-const {User}= require("../models/user.model.js")
-const bcrypt=require("bcryptjs")
-const jwt =require("jsonwebtoken")
+const { User } = require("../models/user.model.js");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const { getDataUri } = require("../Config/datauri.js");
+const { cloudinary } = require("../Config/cloudinary.js");
 
 const register = async (req, res) => {
   try {
     const { fullname, email, phoneNumber, password, role } = req.body;
-    console.log(req.body)
+    console.log(req.body);
     if (!fullname || !email || !phoneNumber || !password || !role) {
       return res
         .status(400)
@@ -66,6 +68,7 @@ const login = async (req, res) => {
     const token = await jwt.sign(tokenData, process.env.SECRET_KEY, {
       expiresIn: "1d",
     });
+
     user = {
       _id: user._id,
       fullname: user.fullname,
@@ -85,11 +88,9 @@ const login = async (req, res) => {
         message: `Welcome back" ${user.fullname}`,
         user: user,
         success: true,
-        
       });
   } catch (error) {
     console.log(error);
-    
   }
 };
 
@@ -104,52 +105,66 @@ const logout = async (req, res) => {
   }
 };
 
+const updateProfile = async (req, res) => {
+  try {
+    const { fullname, email, phoneNumber, bio, skills } = req.body;
 
-const updateProfile=async(req,res)=>{
-    try {
-        const { fullname, email, phoneNumber, bio, skills } = req.body;
-       
-        const file=req.file;
-         
+    // const file=req.file;
+
     // cloudinary
+
+    const file = req.file;
+    fileUri = getDataUri(file);
+    const cloudResponse = await cloudinary.uploader.upload(fileUri.content);
+
     let skillsArray;
-    if(skills){
-      skillsArray=skills.split(",")
-    }
-   
-    const userId= req.id  //middleware auth
-    let user =await User.findById(userId)
-    if(!user){
-        return res.status(404).send({ message: "User not found", success: false });
+    if (skills) {
+      skillsArray = skills.split(",");
     }
 
-    //updating date 
-    if(fullname)user.fullname=fullname
-    if(email)user.email=email
-    if(phoneNumber)user.phoneNumber=phoneNumber
-    if(bio) user.profile.bio=bio
-    if(skills) user.profile.skills=skillsArray
-   
+    const userId = req.id; //middleware auth
+    let user = await User.findById(userId);
+    if (!user) {
+      return res
+        .status(404)
+        .send({ message: "User not found", success: false });
+    }
 
-    await user.save()
+    //updating date
+    if (fullname) user.fullname = fullname;
+    if (email) user.email = email;
+    if (phoneNumber) user.phoneNumber = phoneNumber;
+    if (bio) user.profile.bio = bio;
+    if (skills) user.profile.skills = skillsArray;
+
+    //resume
+    if (cloudResponse) {
+      user.profile.resume = cloudResponse.secure_url; //save the cloudinary url
+      user.profile.resumeOriginalName = file.originalname; //save the original name
+    }
+
+    await user.save();
     user = {
-        _id: user._id,
-        fullname: user.fullname,
-        email: user.email,
-        phoneNumber: user.phoneNumber,
-        role: user.role,
-        profile: user.profile,
-      };
-      console.log(user, "update")
-      return res.status(200).send({ message: "Profile updated successfully", success: true, user})
-    } catch (error) {
-        console.log(error)
-    }
-}
+      _id: user._id,
+      fullname: user.fullname,
+      email: user.email,
+      phoneNumber: user.phoneNumber,
+      role: user.role,
+      profile: user.profile,
+    };
+
+    console.log(user, "update");
+    return res
+      .status(200)
+      .send({ message: "Profile updated successfully", success: true, user });
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 module.exports = {
   register,
   login,
   logout,
-  updateProfile
+  updateProfile,
 };
