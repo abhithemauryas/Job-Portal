@@ -144,8 +144,7 @@ const UpdateProfileDialog = ({ open, setOpen }) => {
                   name="skills"
                   className="col-span-3"
                 />
-              </div>
-
+              </div>             
               <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="file" className="text-right">
                   Resume

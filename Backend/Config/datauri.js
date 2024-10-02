@@ -1,5 +1,4 @@
 const DatauriParser = require('datauri/parser');
-// const parser = new DatauriParser();
 const path= require("path")
 
 const getDataUri=(file)=>{

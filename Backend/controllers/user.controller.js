@@ -13,6 +13,10 @@ const register = async (req, res) => {
         .status(400)
         .send({ message: "Please fill all the fields", success: false });
     }
+    const file =req.file;
+    const fileUrl = getDataUri(file)
+    const cloudResponse=await cloudinary.uploader.upload(fileUrl.content);
+
     const user = await User.findOne({ email });
     if (user) {
       return res
@@ -27,6 +31,9 @@ const register = async (req, res) => {
       phoneNumber,
       password: hashedPassword,
       role,
+      profile:{
+        profilePhoto:cloudResponse.secure_url,
+      }
     });
     return res
       .status(201)
