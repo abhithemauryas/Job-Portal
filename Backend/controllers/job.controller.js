@@ -1,6 +1,6 @@
 const express =require("express")
 const { Job } = require('../models/job.model');
-
+const {Application}=require("../models/application.model")
 
 const router = express.Router();
 
@@ -64,7 +64,9 @@ const getAllJobs=async(req,res)=>{
 const getJobById=async(req,res)=>{
     try {
          const jobId=req.params.id;
-         const job=await Job.findById(jobId)
+         const job=await Job.findById(jobId).populate({
+            path:"applications"
+         })
          if(!job){
             return res.status(404).send({message:"Job not found.",success:false})
          };
@@ -74,6 +76,7 @@ const getJobById=async(req,res)=>{
     }
  
 };
+
 
 // how many job created by admin
 const getAdminJobs=async(req,res)=>{

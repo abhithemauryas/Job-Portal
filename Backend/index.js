@@ -26,12 +26,9 @@ app.use("/api/v1/job", jobRoute.router);
 app.use("/api/v1/application", applicationRoute.router); 
 
 
-
-
-
 app.get("/home",(req,res)=>{
     res.status(201).send({"msg":"Hey from backend", status:true})
-}) 
+})
 
 app.listen(process.env.port,async()=>{
     await Connection
