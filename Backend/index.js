@@ -20,6 +20,8 @@ app.use(cors({
   }));
 
 
+  
+
 app.use("/api/v1/user", userRoutes.router);
 app.use("/api/v1/company", companyRoute.router);
 app.use("/api/v1/job", jobRoute.router);

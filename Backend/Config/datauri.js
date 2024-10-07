@@ -9,4 +9,5 @@ const getDataUri=(file)=>{
 }
 
 
+
 module.exports = {getDataUri}

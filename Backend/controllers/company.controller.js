@@ -1,5 +1,6 @@
 const { Company } = require("../models/company.model.js");
-
+const { getDataUri } = require("../Config/datauri.js");
+const { cloudinary } = require("../Config/cloudinary.js");
 
 const registerCompany = async (req, res) => {
   try {
@@ -7,13 +8,13 @@ const registerCompany = async (req, res) => {
     if (!companyName) {
       return res
         .status(400)
-        .send({ message: "Company name is required", sucsess: false });
+        .send({ message: "Company name is required", success: false });
     }
     let company = await Company.findOne({ name: companyName });
     if (company) {
       return res
         .status(400)
-        .send({ message: "You can't register same company", sucsess: false });
+        .send({ message: "You can't register same company", success: false });
     }
     company = await Company.create({
       name: companyName,
@@ -22,9 +23,12 @@ const registerCompany = async (req, res) => {
     return res.status(201).send({
       message: "Company register successfully",
       company,
-      sucsess: true,
+      
+      success: true,
     });
-  } catch (error) {}
+  } catch (error) {
+    console.log(error)
+  }
 };
 
 const getCompany = async (req, res) => {
@@ -34,9 +38,9 @@ const getCompany = async (req, res) => {
     if (!companies) {
       return res
         .status(404)
-        .send({ message: "Company not found", sucsess: false });
+        .send({ message: "Company not found", success: false });
     }
-    return res.status(200).send({ companies, sucsess: true });
+    return res.status(200).send({ companies, success: true });
   } catch (error) {
     console.log(error);
 
@@ -51,31 +55,39 @@ const getCompanyById = async (req, res) => {
     if (!company) {
       return res
         .status(404)
-        .send({ message: "Company not found", sucsess: false });
+        .send({ message: "Company not found", success: false });
     }
-    return res.status(200).send({ company, sucsess: true });
+    return res.status(200).send({ company, success: true });
   } catch (error) {
     console.log(error);
   }
 };
 
 const updateCompany = async (req, res) => {
+  
   try {
     const { name, description, website, location } = req.body;
+    
     const file = req.file; //cloudinary data
-    const updateData = { name, description, website, location };
+    const fileUri= getDataUri(file)
+    const cloudResponse= await cloudinary.uploader.upload(fileUri.content);
+    const  logo =cloudResponse.secure_url
+    const updateData = { name, description, website, location,logo };
     const company = await Company.findByIdAndUpdate(req.params.id, updateData, {
       new: true,
     });
     if (!company) {
       return res
         .status(404)
-        .send({ message: "Company not found.", sucsess: true });
+        .send({ message: "Company not found.", success: true });
     }
     return res
       .status(200)
-      .send({ message: "Company informantion updated", sucsess: true });
-  } catch (error) {}
+      .send({ message: "Company informantion updated", success: true });
+      
+  } catch (error) {
+    console.log(error)
+  }
 };
 
 module.exports={
