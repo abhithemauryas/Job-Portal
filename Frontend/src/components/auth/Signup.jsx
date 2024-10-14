@@ -21,7 +21,7 @@ const Signup = () => {
     role: "",
     file: "",
   });
-  const {loading}= useSelector(store=>store.auth)
+  const {loading, user}= useSelector(store=>store.auth)
   const navigate=useNavigate()
   const changeEventHandler = (e) => {
     setinput({ ...input, [e.target.name]: e.target.value });
@@ -62,6 +62,11 @@ const Signup = () => {
       dispatch(setLoading(false))
     }
   }
+  useEffect(()=>{
+    if(user){
+      navigate("/")
+    }
+  })
 
 
   return (

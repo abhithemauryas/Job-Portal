@@ -16,11 +16,13 @@ const userSchima=new mongoose.Schema({
         type:String,
         required:true
     },
+
     role:{
         type:String,
         enum:["student", "recruiter"],
         required:true
     },
+    
     profile:{
         bio:{type:String},
         skills:[{type:String}],
